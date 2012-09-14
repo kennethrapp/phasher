@@ -118,7 +118,7 @@ $end = microtime(1);
 $time = $end-$start;
 $mem = memory_get_peak_usage(1);
 
-echo "<hr>time: $time peak $mem";
+echo "<hr>time: $time peak mem: $mem";
 
 
 

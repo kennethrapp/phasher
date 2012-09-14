@@ -38,11 +38,8 @@ private static $Instance;
 	/* hash two images and return an index of their similarty as a percentage. */
 	
 	public function Compare($res1, $res2, $rot=0, $precision = 1){
-		
 		$hash1 = $this->HashImage($res1); // this one should never be rotated
-		
 		$hash2 = $this->HashImage($res2, $rot);
-		
 		$similarity = count($hash1);
 		
 		// take the hamming distance between the hashes.
@@ -51,10 +48,12 @@ private static $Instance;
 				$similarity--;
 			}
 		}
-		
 		$percentage = round(($similarity/count($hash1)*100), $precision);
-		
 		return $percentage;
+	}
+	
+	public function ArrayAverage($arr){
+		return floor(array_sum($arr) / count(array_filter($arr)));
 	}
 	
 	/* build a perceptual hash out of an image. Just uses averaging because it's faster.
@@ -101,7 +100,7 @@ private static $Instance;
 		}		
 		
 		// find the average value in the array
-		$avg = floor(array_sum($pixels) / count(array_filter($pixels)));
+		$avg = $this->ArrayAverage($pixels);
 		
 		// create a hash (1 for pixels above the mean, 0 for average or below)
 		$index = 0;
