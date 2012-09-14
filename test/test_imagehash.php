@@ -13,7 +13,7 @@ require_once('../imagedeuce.class.php');
 
 $I = ImageDeuce::Instance();
 
-$file = 'images/132669573517.jpg';
+
 /*
 $hashes = array(
 	$I->ImageHash($file, 0, 0),
@@ -35,21 +35,35 @@ $hashes = array(
 );
 
 echo "<pre> Hashes for $file: ".print_r($hashes, true)."</pre>"; */
-$hashsize = 12;
-echo '<div><img src="'.$file.'"></div>';
-$hash = $I->ImageHash($file, $hashsize);
+$hashsize = 8;
 
+$file = 'images/Alyson_Hannigan_200512.jpg';
+echo 'original image and hash<br>';
+echo '<img src="'.$file.'">';
+$hash = $I->ImageHash($file, $hashsize);
 echo $I->HashAsTable($hash, $hashsize);
 
+echo '<hr>';
+echo 'original image resized by 100px and hash<br>';
+$file = 'images/Alyson_Hannigan_200512_02.jpg';
+echo '<img src="'.$file.'">';
+$hash = $I->ImageHash($file, $hashsize);
+echo $I->HashAsTable($hash, $hashsize);
+
+echo '<hr>';
+
+$file = 'images/Alyson_Hannigan_200512_rot.jpg';
+echo 'original image rotated 90 degrees and hash<br>';
+echo '<img src="'.$file.'">';
+$hash = $I->ImageHash($file, $hashsize);
+echo $I->HashAsTable($hash, $hashsize);
+
+
+$file = 'images/Alyson_Hannigan_200512_rot.jpg';
+echo 'original image with the 90 degree rotated hash pregenerated<br>';
+echo '<img src="'.$file.'">';
 $hash = $I->ImageHash($file, $hashsize, 90);
 echo $I->HashAsTable($hash, $hashsize);
-
-$hash = $I->ImageHash($file, $hashsize, 180);
-echo $I->HashAsTable($hash, $hashsize);
-
-$hash = $I->ImageHash($file, $hashsize, 270);
-echo $I->HashAsTable($hash, $hashsize);
-
 
 $end = microtime(1);
 	
