@@ -19,43 +19,83 @@ private static $Instance;
 		return self::$Instance;
 	}
 	
-	/* takes an image, shrinks it to a square, then desaturates it. 
-		turns out desaturate doesn't actually help though. 
-		http://www.scratchapixel.com/lessons/2d-image-processing/dct/
-		*/
 	
-	private function Reduce($res, $resourcesize = 8){
-		$res = $this->NormalizeAsResource($res);
-		$rescached = imagecreatetruecolor($resourcesize, $resourcesize);
-		imagecopyresampled($rescached, $res, 0, 0, 0, 0, $resourcesize, $resourcesize, imagesx($res), imagesy($res));
-		$rescached = $this->Desaturate($rescached);
+	/* multi-pass comparison, returns the highest match after comparing rotations. */
+	
+	public function Detect($res1, $res2, $precision = 1){
+		$hash1 = $this->HashImage($res1);
+		$result = 0;
+		for($rot=0; $rot<=270; $rot+=90){
+			$new_result = $this->Compare($res1, $res2, $rot, $precision);
+			if($new_result > $result){
+				$result = $new_result;
+			}
+		}
 		
-		/*
-
-		*/
-		
-		//imagepng($rescached, 'hash_'.mt_rand(0,10).'.png');
-		imagedestroy($res);
-		return $rescached;
+		return $result;
 	}
 	
-	/* build a perceptual hash out of an image. 
+	/* hash two images and return an index of their similarty as a percentage. */
+	
+	public function Compare($res1, $res2, $rot=0, $precision = 1){
+		
+		$hash1 = $this->HashImage($res1); // this one should never be rotated
+		
+		$hash2 = $this->HashImage($res2, $rot);
+		
+		$similarity = count($hash1);
+		
+		// take the hamming distance between the hashes.
+		foreach($hash1 as $key=>$val){
+			if($hash1[$key] != $hash2[$key]){
+				$similarity--;
+			}
+		}
+		
+		$percentage = round(($similarity/count($hash1)*100), $precision);
+		
+		return $percentage;
+	}
+	
+	/* build a perceptual hash out of an image. Just uses averaging because it's faster.
+		also we're storing the hash as an array of bits instead of a string. 
 		http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html */
 		
-	public function ImageHash($res, $size = 8){
+	public function HashImage($res, $rot=0, $mir=0, $size = 8){
 		
 		$res = $this->NormalizeAsResource($res); // make sure this is a resource
-		$res = $this->Reduce($res, $size);	// reduce and desaturate the image
+		$rescached = imagecreatetruecolor($size, $size);
+		imagecopyresampled($rescached, $res, 0, 0, 0, 0, $size, $size, imagesx($res), imagesy($res));
+		$res = $this->Desaturate($rescached);
 		
 		$w = imagesx($res);
 		$h = imagesy($res);
 		$index=0;
 		$pixels = array();
-		
-		
-		for($y = 0;$y < $w ; $y++) {
-			for($x = 0;$x < $h; $x++) {
-				$pixels[$index] = imagecolorat($res,$x,$y);
+
+		for($x = 0;$x < $w ; $x++) {
+			for($y = 0;$y < $h; $y++) { 
+				
+				/* 	instead of rotating the image, we'll rotate the position of the pixels to allow us to generate a hash
+					we can use to judge if one image is a rotated or flipped version of the other, without actually creating
+					an extra image resource. This currently only works at all for 90 degree rotations and mirrors. */
+					
+				switch($rot){
+					case 90:	$rx=(($h-1)-$y);	$ry=$x;			break;
+					case 180:	$rx=($w-$x)-1;		$ry=($h-1)-$y;	break;
+					case 270:	$rx=$y;				$ry=($h-$x)-1;	break;
+					default:	$rx=$x;				$ry=$y;
+				}
+				
+				switch($mir){
+					case 1: $rx = (($w-$rx)-1); break;
+					case 2: $ry = ($h-$ry); 	break;
+					case 3: $rx = (($w-$rx)-1);
+							$ry = ($h-$ry); 	break;
+					default: 					break;
+				}
+			
+				$pixels[$index] = imagecolorat($res, $rx, $ry);
 				$index++;
 			}
 		}		
@@ -75,10 +115,12 @@ private static $Instance;
 			}
 			$index += 1;
 		}
-		// return the array as a string 
-		return implode(null,$hash);
+
+		// return the array
+		return $hash;
 	}
 	
+
 	/* if $resource is a filename pointing to an image, make it an image resource. Otherwise
 		return the resource. */
 		
@@ -125,34 +167,24 @@ private static $Instance;
 	}
 	
 	/* returns a binary hash as an html table, with each cell representing 1 or 0. */
-	
 	public function HashAsTable($hash, $size=8, $cellsize=10){
-
+		
 		$index = 0;
-
 		$table = "<table cellpadding=\"0\" cellspacing=\"0\" style=\"display:inline-block;border:1px solid #000;margin:1px;\"><tr><td\<tbody>";
-		
-		for($x=0; $x<=$size; $x++){
-		
+		for($x=0; $x<$size; $x++){
 			$table.="<tr>";
-			
-			for($y=0; $y<=$size; $y++){
-			
-				$bit = (bool)(substr($hash, $index,1));
+			for($y=0; $y<$size; $y++){
+				$bit = (bool)($hash[$index]);
 				$bitcolor = ($bit)?"#ddd":"#000";
 				$abitcolor = ($bit)?"#000":"#fff";
 				$sizepx = $size."px";
 				$style="width:$sizepx;height:$sizepx;background-color:$bitcolor;color:$abitcolor;text-align:center;padding:1px;";
 				$table.="<td style=\"$style\"><img width=\"$size\" height=\"$size\" src=\"dot_clear.gif\"></td>";
-				
 				$index++;
 			}
-		
 			$table.="</tr>";
 		}
-		
 		$table.="</tbody></table>";
-		
 		return $table;
 	}	
 
