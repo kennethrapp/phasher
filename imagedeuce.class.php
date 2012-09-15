@@ -65,10 +65,10 @@ private static $Instance;
 		$res = $this->NormalizeAsResource($res); // make sure this is a resource
 		$rescached = imagecreatetruecolor($size, $size);
 		imagecopyresampled($rescached, $res, 0, 0, 0, 0, $size, $size, imagesx($res), imagesy($res));
-		$res = $this->Desaturate($rescached);
+		//$res = $this->Desaturate($rescached);
 		
-		$w = imagesx($res);
-		$h = imagesy($res);
+		$w = imagesx($rescached);
+		$h = imagesy($rescached);
 		$index=0;
 		$pixels = array();
 
@@ -93,8 +93,18 @@ private static $Instance;
 							$ry = ($h-$ry); 	break;
 					default: 					break;
 				}
-			
-				$pixels[$index] = imagecolorat($res, $rx, $ry);
+				
+				// pseudo-desaturate (run the code on the data but don't actually affect the image)
+				$rgb = imagecolorat($rescached, $rx, $ry);
+				
+				$r = ($rgb >> 16) & 0xFF;
+				$g = ($rgb >> 8) & 0xFF;
+				$b = $rgb & 0xFF;
+				
+				$gs = (($r*0.299)+($g*0.587)+($b*0.114));
+				$gs = floor($gs);
+				
+				$pixels[$index] = $gs; 
 				$index++;
 			}
 		}		
@@ -134,35 +144,32 @@ private static $Instance;
 		}
 	}
 	
-	//http://php.about.com/od/gdlibrary/ss/grayscale_gd.htm
-	public function Desaturate($res){
-		$res = $this->NormalizeAsResource($res);
+	public function HashAsString($hash, $hex=true){
 		
-		$resource = array();
 		$i = 0;
-
-		$width  = imagesx($res);
-		$height = imagesy($res);
+		$bucket=null;
 		
-		$canvas = imagecreate($width, $height); 
-	 
-		for ($c=0; $c<256; $c++) {
-			$palette[$c] = imagecolorallocate($canvas, $c, $c, $c);
-		}
+		$return = null;
 		
-		for($y=0; $y<$height; $y++){
-			for($x=0; $x<$width; $x++){
-				$rgb = imagecolorat($res,$x,$y);
-				$r = ($rgb >> 16) & 0xFF;
-				$g = ($rgb >> 8) & 0xFF;
-				$b = $rgb & 0xFF;
-				$gs = (($r*0.299)+($g*0.587)+($b*0.114));
-				imagesetpixel($canvas,$x,$y,$palette[$gs]);
-				$i+=1;
+		if($hex == true){
+			
+			foreach($hash as $key=>$val){
+				$bit=$hash[$key];
+				$i++;
+				$bucket.=$bit;
+				
+				if($i==4){
+					echo dechex(bindec($bucket));
+					$i=0;
+					$bucket=null;
+				}
+				
 			}
-		} 
-		
-		return $canvas;		
+			
+			return $return;
+		}
+			
+		return implode(null, $hash);
 	}
 	
 	/* returns a binary hash as an html table, with each cell representing 1 or 0. */

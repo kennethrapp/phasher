@@ -13,21 +13,20 @@ require_once('../imagedeuce.class.php');
 
 $I = ImageDeuce::Instance();
 
-$hashsize = 8;
-
 $file = 'images/Alyson_Hannigan_200512.jpg';
-echo 'original image and hash<br>';
+echo 'original image and hash (and hash string)<br>';
 echo '<img src="'.$file.'">';
 $hash = $I->HashImage($file);
 echo $I->HashAsTable($hash);
+echo $I->HashAsString($hash);
 
 echo '<hr>';
-echo 'original image resized by 100px and hash<br>';
+echo 'original image resized by 100px and hash (and hash string)<br>';
 $file = 'images/Alyson_Hannigan_200512_02.jpg';
 echo '<img src="'.$file.'">';
 $hash = $I->HashImage($file);
 echo $I->HashAsTable($hash);
-
+echo $I->HashAsString($hash);
 echo '<hr>';
 
 $file = 'images/Alyson_Hannigan_200512_rot.jpg';
