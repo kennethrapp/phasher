@@ -37,3 +37,16 @@ $I->HashAsString(hash, hex);
 ```
 
 Takes a hash returned by HashImage and displays it as a string. If hex is true, the string will be hexadecimal, otherwise a binary string. Default is hex.
+
+```php
+<?php
+$I->Detect(image1, image2);
+```
+Returns a percentage of similarity match between the hashed values of image 1 and image 2. Includes basic rotation and mirror checks, and returns the highest percentage match of the various checks.
+
+```php
+<?php
+$I->Compare(image1, image2, rot);
+```
+Returns a percentage of similarity match between the hashed values of image1 and image2, rotating the hash for image2 by rot degrees (0, 90, 180 or 270 - default is 0). Only makes a single comparison. 
+
