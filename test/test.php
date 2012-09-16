@@ -1,9 +1,9 @@
 <?php
 
 $start = microtime(1);
-require_once('../imagedeuce.class.php');
+require_once('../phasher.class.php');
 
-$I = ImageDeuce::Instance();
+$I = PHasher::Instance();
 
 $images = array(
 	'test' => 'images/Alyson_Hannigan_200512.jpg',

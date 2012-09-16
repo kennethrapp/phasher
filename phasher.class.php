@@ -1,8 +1,9 @@
 <?PHP
-/* need to shrink, desat then hash.
+/* 
+	PHasher is a naive perceptual hashing class for PHP. 
 	
 */
-class ImageDeuce{
+class PHasher{
 
 private static $Instance;
 	private $filetype_data = array();
