@@ -129,6 +129,80 @@ private static $Instance;
 		return $hash;
 	}
 	
+	/*
+	Heavily modified from a bicubic resampling function by an unknown author here: http://php.net/manual/en/function.imagecopyresampled.php#78049
+	this will scale down, desaturate and hash an image entirely in memory without the intermediate steps of altering the image resource and
+	re-reading pixel data, and return a perceptual hash for that image. Doesn't support rotation yet and is not actually as fast as it could be
+	due to the multiple looping. 
+*/
+
+	function  FastHashImage($res, $scale=8)  {
+
+		$res = $this->NormalizeAsResource($res);
+	
+		$hash = array();
+		$src_w = imagesx($res);
+		$src_h = imagesy($res);
+		
+		$rX = $src_w / $scale;
+		$rY = $src_h / $scale;
+		$w = 0;
+		for ($y = 0; $y < $scale; $y++)  {
+			$ow = $w; $w = round(($y + 1) * $rY);
+			$t = 0;
+			for ($x = 0; $x < $scale; $x++)  {
+				$r = $g = $b = 0; $a = 0;
+				$ot = $t; $t = round(($x + 1) * $rX);
+				for ($u = 0; $u < ($w - $ow); $u++)  {
+					for ($p = 0; $p < ($t - $ot); $p++)  {
+					
+						$rgb = imagecolorat($res, $ot + $p, $ow + $u);
+						
+						$r = ($rgb >> 16) & 0xFF;
+						$g = ($rgb >> 8) & 0xFF;
+						$b = $rgb & 0xFF;
+						
+						$gs = floor((($r*0.299)+($g*0.587)+($b*0.114))); 
+						$hash[$x][$y] = $gs;
+					}
+					
+				}
+			}
+		}
+		
+		// reset all the indexes. 
+		$nhash = array();
+
+		$xnormal=0;
+
+		foreach($hash as $xkey=>$xval){
+			foreach($hash[$xkey] as $ykey=>$yval){
+				unset($hash[$xkey]);
+				$nhash[$xnormal][] = $yval;
+			}
+			$xnormal++;
+		}
+		
+		// now hash (I really need to reduce the number of loops here.)
+		$phash = array();
+		
+		for($x=0; $x<$scale; $x++){
+			$avg = floor(array_sum($nhash[$x]) / count(array_filter($nhash[$x])));
+			for($y=0; $y<$scale; $y++){
+				$rgb = $nhash[$x][$y];
+				if($rgb > $avg){
+					$phash[] = 1;
+				}
+				else{
+					$phash[] = 0;
+				}
+			}
+		}
+		
+		return $phash;
+		
+	}
+	
 
 	/* if $resource is a filename pointing to an image, make it an image resource. Otherwise
 		return the resource. */
@@ -143,6 +217,8 @@ private static $Instance;
 			}
 		}
 	}
+
+	/* return a perceptual hash as a string. Hex or binary. */
 	
 	public function HashAsString($hash, $hex=true){
 		

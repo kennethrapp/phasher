@@ -7,13 +7,11 @@ Tests for the image hash method.
 <hr>
 <pre>
 <?php
-$start = microtime(1);
 
-require_once('../imagedeuce.class.php');
+require_once('test.php');
 
-$I = ImageDeuce::Instance();
 
-$file = 'images/Alyson_Hannigan_200512.jpg';
+$file = $images['test'];
 echo 'original image and hash (and hash string)<br>';
 echo '<img src="'.$file.'">';
 $hash = $I->HashImage($file);
@@ -22,21 +20,21 @@ echo $I->HashAsString($hash);
 
 echo '<hr>';
 echo 'original image resized by 100px and hash (and hash string)<br>';
-$file = 'images/Alyson_Hannigan_200512_02.jpg';
+$file = $images['scaled_down'];
 echo '<img src="'.$file.'">';
 $hash = $I->HashImage($file);
 echo $I->HashAsTable($hash);
 echo $I->HashAsString($hash);
 echo '<hr>';
 
-$file = 'images/Alyson_Hannigan_200512_rot.jpg';
+$file = $images['rotated_90'];
 echo 'original image rotated 90 degrees clockwise and hash<br>';
 echo '<img src="'.$file.'">';
 $hash = $I->HashImage($file);
 echo $I->HashAsTable($hash);
 echo '<hr>';
 
-$file = 'images/Alyson_Hannigan_200512_02.jpg';
+$file =  $images['test'];
 echo 'original image with pregenerated rotated hashes (90, 180, 270.)  <br>';
 echo '<img src="'.$file.'">';
 
@@ -49,8 +47,8 @@ echo $I->HashAsTable($hash180);
 echo $I->HashAsTable($hash270);
 
 echo '<hr>';
-$file1 = 'images/Alyson_Hannigan_200512_02.jpg';
-$file2 = 'images/Alyson_Hannigan_200512.jpg';
+$file1 = $images['test'];
+$file2 = $images['scaled_down'];
 echo 'Comparing the original image with the reduced size one. Since the hashes are the same the result should approach 1. <br>';
 echo '<img src="'.$file1.'">';
 echo '<img src="'.$file2.'">';
@@ -58,8 +56,8 @@ $result = $I->Compare($file1, $file2);
 echo "<br>Result: $result";
 
 echo '<hr>';
-$file1 = 'images/Alyson_Hannigan_200512.jpg';
-$file2 = 'images/Alyson_Hannigan_200512_rot.jpg';
+$file1 = $images['test'];
+$file2 = $images['rotated_90'];
 echo 'Comparing the original image with the rotated one, passing rotations as arguments. <br>';
 echo '<img src="'.$file1.'">';
 echo '<img src="'.$file2.'">';
@@ -71,8 +69,8 @@ echo "<br> Result: 0: $result, 90: $result90, 180: $result180, 270: $result270<b
 
 
 echo '<hr>';
-$file1 = 'images/Alyson_Hannigan_200512.jpg';
-$file2 = 'images/Alyson_Hannigan_200512_rot2.jpg';
+$file1 = $images['test'];
+$file2 = $images['rotated_180'];
 echo 'Repeating the above test with a 180 degree rotated image <br>';
 echo '<img src="'.$file1.'">';
 echo '<img src="'.$file2.'">';
@@ -83,8 +81,8 @@ $result270 = $I->Compare($file1, $file2, 270);
 echo "<br> Result: 0: $result, 90: $result90, 180: $result180, 270: $result270<br>";
 
 echo '<hr>';
-$file1 = 'images/Alyson_Hannigan_200512.jpg';
-$file2 = 'images/Alyson_Hannigan_200512_rot3.jpg';
+$file1 = $images['test'];
+$file2 = $images['rotated_270'];
 echo 'Repeating again with a 270 degree rotated image <br>';
 echo '<img src="'.$file1.'">';
 echo '<img src="'.$file2.'">';
@@ -95,8 +93,8 @@ $result270 = $I->Compare($file1, $file2, 270);
 echo "<br> Result: 0: $result, 90: $result90, 180: $result180, 270: $result270<br>";
 
 echo '<hr>';
-$file1 = 'images/Alyson_Hannigan_200512.jpg';
-$file2 = 'images/Alyson_Hannigan_200512_rot3.jpg';
+$file1 = $images['test'];
+$file2 = $images['rotated_270'];
 echo 'Test of the detection method -- should return the highest match after comparing rotations <br>( won\'t tell us the matched rotation yet)<br>';
 echo '<img src="'.$file1.'">';
 echo '<img src="'.$file2.'">';
@@ -104,8 +102,8 @@ $result = $I->Detect($file1, $file2);
 echo "<br> Result: $result<br>";
 
 echo '<hr>';
-$file1 = 'images/Alyson_Hannigan_200512_02.jpg';
-$file2 = 'images/Alyson_Hannigan_200512_rot3.jpg';
+$file1 = $images['scaled_down'];
+$file2 = $images['rotated_270'];
 echo '<br>Test of the detection method again -- but with the reduced image<br>';
 echo '<img src="'.$file1.'">';
 echo '<img src="'.$file2.'">';
