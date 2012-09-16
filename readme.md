@@ -1,52 +1,40 @@
-# ImageDeuce - A PHP class for image comparison
+# Phasher - a naive perceptual hasher for PHP. 
 
-ImageDeuce is a php implementation of a perceptual hashing algorithm (http://phash.org, http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html) 
-which stores a fingerprint of an image as a hash and allows comparing the similarity of images by comparing the hashes. 
-I've added the ability to also test if an image is a rotated or flipped version of another. 
 
 ## Start:
 
 ```php
-<?php
-$I = ImageDeuce::Instance();
+$P = PHasher::Instance();
 ```
 
 ## Methods:
 
 ```php
-<?php
-$I->HashImage(filename, rot, mir);
+$hash = $I->HashImage($file, $rot); 
 ```
 
-returns an array of 64 bits representing the perceptual hash of the file.
-- filename: an image file
-- rot (optional) generates the hash as if the image were rotated by this value. Currently this can only be 0, 90, 180 or 270. Default is 0.
-- mir (optional) generates the hash as if the image were mirrored (if 1) or flipped (if 2). Default is 0.
+returns the perceptual hash of the image $file. The hash is an array (default size of 64) of bits. 
+- $rot optional: (0|90|180|270) will return the hash as if the image were rotated.  Default is 0.
 
 ```php
-<?php
-$I->HashAsTable(hash);
+echo $I->HashAsTable($hash); 
 ```
-
-Takes a hash returned by HashImage and displays it as an html table, with each cell either light gray (for 1) or black (for 0). This method is slow and
-probably should only be used for debugging and testing. 
+Returns the perceptual hash $hash as an html table, with each cell being light gray or black. The default is an 8*8 table.
 
 ```php
-<?php
-$I->HashAsString(hash, hex);
+echo $I->HashAsString($hash, $hex); 
 ```
-
-Takes a hash returned by HashImage and displays it as a string. If hex is true, the string will be hexadecimal, otherwise a binary string. Default is hex.
+Returns the perceptual hash $hash as a string. 
+- $hex optional:true or false If true, the string will be hexadecimal, otherwise it will be binary. The default for $hex is true;
 
 ```php
-<?php
-$I->Detect(image1, image2);
+echo $I->Compare($file1, $file2); 
 ```
-Returns a percentage of similarity match between the hashed values of image 1 and image 2. Includes basic rotation and mirror checks, and returns the highest percentage match of the various checks.
+
+Compares the hashes of $file1 and $file2 and returns the highest match between them.
 
 ```php
-<?php
-$I->Compare(image1, image2, rot);
+echo $I->Detect($file1, $file2); 
 ```
-Returns a percentage of similarity match between the hashed values of image1 and image2, rotating the hash for image2 by rot degrees (0, 90, 180 or 270 - default is 0). Only makes a single comparison. 
 
+Compares the hash of $file1 to rotated hashes of $file2 and returns the highest match between them. 
