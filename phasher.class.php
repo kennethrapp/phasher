@@ -222,30 +222,21 @@ private static $Instance;
 	/* return a perceptual hash as a string. Hex or binary. */
 	
 	public function HashAsString($hash, $hex=true){
-		
 		$i = 0;
 		$bucket=null;
-		
 		$return = null;
-		
 		if($hex == true){
-			
-			foreach($hash as $key=>$val){
-				$bit=$hash[$key];
+			foreach($hash as $bit){
 				$i++;
 				$bucket.=$bit;
-				
 				if($i==4){
-					echo dechex(bindec($bucket));
+					$return.= dechex(bindec($bucket));
 					$i=0;
 					$bucket=null;
 				}
-				
 			}
-			
 			return $return;
 		}
-			
 		return implode(null, $hash);
 	}
 	
