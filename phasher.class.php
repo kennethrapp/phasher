@@ -6,10 +6,7 @@
 class PHasher{
 
 private static $Instance;
-	private $filetype_data = array();
-	private $mimetype_data = array();
-	private $files = array();
-	
+
 	private function __construct(){
 	}
 	
