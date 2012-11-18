@@ -173,7 +173,9 @@ private static $Instance;
 		
 		// reset all the indexes. 
 		$nhash = array();
+		
 
+		/**/
 		$xnormal=0;
 
 		foreach($hash as $xkey=>$xval){
@@ -182,7 +184,7 @@ private static $Instance;
 				$nhash[$xnormal][] = $yval;
 			}
 			$xnormal++;
-		}
+		} 
 		
 		// now hash (I really need to reduce the number of loops here.)
 		$phash = array();
