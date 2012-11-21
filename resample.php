@@ -1,7 +1,5 @@
 <?php
-require_once('test.php');
-
-$res = imagecreatefromstring(file_get_contents($images['test']));
+$res = imagecreatefromstring(file_get_contents('images/Alyson_Hannigan_200512.jpg'));
 $scale = 64;
 
 /*

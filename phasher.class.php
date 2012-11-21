@@ -6,10 +6,7 @@
 class PHasher{
 
 private static $Instance;
-	private $filetype_data = array();
-	private $mimetype_data = array();
-	private $files = array();
-	
+
 	private function __construct(){
 	}
 	
@@ -173,7 +170,9 @@ private static $Instance;
 		
 		// reset all the indexes. 
 		$nhash = array();
+		
 
+		/**/
 		$xnormal=0;
 
 		foreach($hash as $xkey=>$xval){
@@ -182,7 +181,7 @@ private static $Instance;
 				$nhash[$xnormal][] = $yval;
 			}
 			$xnormal++;
-		}
+		} 
 		
 		// now hash (I really need to reduce the number of loops here.)
 		$phash = array();
@@ -244,7 +243,7 @@ private static $Instance;
 	public function HashAsTable($hash, $size=8, $cellsize=10){
 		
 		$index = 0;
-		$table = "<table cellpadding=\"0\" cellspacing=\"0\" style=\"display:inline-block;border:1px solid #000;margin:1px;\"><tr><td\<tbody>";
+		$table = "<table cellpadding=\"0\" cellspacing=\"0\" style=\"table-layout: fixed;display:inline-block;\"><tr><td><tbody>";
 		for($x=0; $x<$size; $x++){
 			$table.="<tr>";
 			for($y=0; $y<$size; $y++){
@@ -252,8 +251,8 @@ private static $Instance;
 				$bitcolor = ($bit)?"#ddd":"#000";
 				$abitcolor = ($bit)?"#000":"#fff";
 				$sizepx = $size."px";
-				$style="width:$sizepx;height:$sizepx;background-color:$bitcolor;color:$abitcolor;text-align:center;padding:1px;";
-				$table.="<td style=\"$style\"><img width=\"$size\" height=\"$size\" src=\"dot_clear.gif\"></td>";
+				$style="width:{$size}px;height:{$size}px;background-color:$bitcolor;color:$abitcolor;text-align:center;padding:0px;";
+				$table.="<td style=\"$style\"></td>";
 				$index++;
 			}
 			$table.="</tr>";
