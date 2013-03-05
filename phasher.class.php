@@ -127,12 +127,10 @@ private static $Instance;
 		return $hash;
 	}
 	
-	/*
-	Heavily modified from a bicubic resampling function by an unknown author here: http://php.net/manual/en/function.imagecopyresampled.php#78049
+	/* Heavily modified from a bicubic resampling function by an unknown author here: http://php.net/manual/en/function.imagecopyresampled.php#78049
 	this will scale down, desaturate and hash an image entirely in memory without the intermediate steps of altering the image resource and
 	re-reading pixel data, and return a perceptual hash for that image. Doesn't support rotation yet and is not actually as fast as it could be
-	due to the multiple looping. 
-*/
+	due to the multiple looping. */
 
 	function  FastHashImage($res, $scale=8)  {
 
