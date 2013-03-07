@@ -2,6 +2,8 @@ Perceptual hashing is a method to generate a hash of an image which allows multi
 
 I've extended this basic method into a class which can also compare images which have been rotated or flipped (but only in 90 degree increments.) It can also match images which have been color corrected (to a degree) or altered. This flexibility, though, does lend itself to false positives and it's ridiculously slow - currently it takes about a second to hash and compare images -- in production you would want to generate a cache of hashes for existing images, perhaps, and then compare the hash of an image to the hashes. 
 
+PHasher is available under the MIT license. 
+
 ***
 ###Usage###
 
