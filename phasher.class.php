@@ -62,12 +62,17 @@ private static $Instance;
 		
 		$res = $this->NormalizeAsResource($res); // make sure this is a resource
 		$rescached = imagecreatetruecolor($size, $size);
+		
 		imagecopyresampled($rescached, $res, 0, 0, 0, 0, $size, $size, imagesx($res), imagesy($res));
 		imagecopymergegray($rescached, $res, 0, 0, 0, 0, $size, $size, 50);
+		
+		$w = imagesx($rescached);
+		$h = imagesy($rescached);
 		
 		$pixels = array();
 
 		for($y = 0; $y < $size; $y++) {
+		
 			for($x = 0; $x < $size; $x++) { 
 				
 				/* 	instead of rotating the image, we'll rotate the position of the pixels to allow us to generate a hash
@@ -90,6 +95,7 @@ private static $Instance;
 				}
 				
 				$rgb = imagecolorsforindex($rescached, imagecolorat($rescached, $rx, $ry));
+				
     			$r = $rgb['red'];
 				$g = $rgb['green'];
 				$b = $rgb['blue'];
@@ -98,7 +104,7 @@ private static $Instance;
 				$gs = floor($gs);
 				
 				$pixels[] = $gs; 
-				$index++;
+				//$index++;
 			}
 		}		
 		

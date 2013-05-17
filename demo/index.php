@@ -26,8 +26,8 @@ class PHasher_Test {
 			
 		);
 		
-		if(isset($_POST['test'])){
-			switch(intval($_POST['test'])){
+		if(isset($_GET['test'])){
+			switch(intval($_GET['test'])){
 				//case 7:  $this->Test($this->tests[7], 'IsNegative', array('monalisa2.jpg','monalisa5.jpg')); break;
 				case 6:  $this->Compare($this->tests[6], 'monalisa2.jpg', 'monalisa4.jpg'); break;
 				case 5:  $this->Compare($this->tests[5], 'monalisa.jpg', 'monalisa3.jpg'); break;
@@ -71,14 +71,19 @@ $(window).on('load', function(){
 				e.preventDefault();
 				var rundemo =  $.ajax({
 					"url": "index.php",
-					"type": "POST",
+					"type": "GET",
 					"data": {
 						"test": datatest
 					}
 				});
-				rundemo.success(function(data){
-					var obj = $.parseJSON(data);
-					console.log(obj);
+				rundemo.success(function(obj){
+					
+					//console.log(data);
+					
+					//var obj = $.parseJSON(data);
+					
+					//console.log(obj);
+					
 					var content = $("<div></div>");
 					content.append(obj.text);
 					content.append('<hr>');
@@ -118,11 +123,22 @@ EOD;
 			)
 		);
 		
-		$result = json_encode($result);
-		echo $result;
+		try{
+			$result = json_encode($result,  JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
+			header("Content-Type: application/json; charset-utf-8;");
+			header("Content-Length: ".strlen($result));
+			die($result);
+		
+		}catch(Exception $e){
+			die(htmlspecialchars($e));
+		}
+		
+		//$result = json_encode($result);
+		//echo $result;
 	}
 
 	function Compare($text, $file1, $file2){
+	
 		global $I;
 		$hash1 = $this->I->HashImage($file1);
 		$hash2 = $this->I->HashImage($file2);
@@ -130,13 +146,21 @@ EOD;
 		$result90 = $this->I->Compare($file1, $file2, 90);
 		$result180 = $this->I->Compare($file1, $file2, 180);
 		$result270 = $this->I->Compare($file1, $file2, 270);
+		
 		$result = array(
 			"text" => $text,
 			"images" => array($file1, $file2),
 			"results" => array($this->I->HashAsTable($hash1), $this->I->HashAsTable($hash2), "Comparison Result: @0: $result0, @90: $result90, @180: $result180, @270: $result270")
 		);
-		$result = json_encode($result);
-		echo $result;
+		
+		try{
+			$result = json_encode($result,  JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
+			header("Content-Type: application/json; charset-utf-8;");
+			header("Content-Length: ".strlen($result));
+			die($result);
+		}catch(Exception $e){
+			die(htmlspecialchars($e));
+		}
 	}
 	
 }
