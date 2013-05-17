@@ -51,7 +51,7 @@ private static $Instance;
 	}
 	
 	public function ArrayAverage($arr){
-		return floor(array_sum($arr) / count(array_filter($arr)));
+		return floor(array_sum($arr) / count($arr));
 	}
 	
 	/* build a perceptual hash out of an image. Just uses averaging because it's faster.
@@ -63,15 +63,12 @@ private static $Instance;
 		$res = $this->NormalizeAsResource($res); // make sure this is a resource
 		$rescached = imagecreatetruecolor($size, $size);
 		imagecopyresampled($rescached, $res, 0, 0, 0, 0, $size, $size, imagesx($res), imagesy($res));
-		//$res = $this->Desaturate($rescached);
+		imagecopymergegray($rescached, $res, 0, 0, 0, 0, $size, $size, 50);
 		
-		$w = imagesx($rescached);
-		$h = imagesy($rescached);
-		$index=0;
 		$pixels = array();
 
-		for($x = 0;$x < $w ; $x++) {
-			for($y = 0;$y < $h; $y++) { 
+		for($y = 0; $y < $size; $y++) {
+			for($x = 0; $x < $size; $x++) { 
 				
 				/* 	instead of rotating the image, we'll rotate the position of the pixels to allow us to generate a hash
 					we can use to judge if one image is a rotated or flipped version of the other, without actually creating
@@ -92,17 +89,15 @@ private static $Instance;
 					default: 					break;
 				}
 				
-				// pseudo-desaturate (run the code on the data but don't actually affect the image)
-				$rgb = imagecolorat($rescached, $rx, $ry);
-				
-				$r = ($rgb >> 16) & 0xFF;
-				$g = ($rgb >> 8) & 0xFF;
-				$b = $rgb & 0xFF;
+				$rgb = imagecolorsforindex($rescached, imagecolorat($rescached, $rx, $ry));
+    			$r = $rgb['red'];
+				$g = $rgb['green'];
+				$b = $rgb['blue'];
 				
 				$gs = (($r*0.299)+($g*0.587)+($b*0.114));
 				$gs = floor($gs);
 				
-				$pixels[$index] = $gs; 
+				$pixels[] = $gs; 
 				$index++;
 			}
 		}		
@@ -238,7 +233,7 @@ private static $Instance;
 	}
 	
 	/* returns a binary hash as an html table, with each cell representing 1 or 0. */
-	public function HashAsTable($hash, $size=8, $cellsize=10){
+	public function HashAsTable($hash, $size=8, $cellsize=8){
 		
 		$index = 0;
 		$table = "<table cellpadding=\"0\" cellspacing=\"0\" style=\"table-layout: fixed;display:inline-block;\"><tr><td><tbody>";
