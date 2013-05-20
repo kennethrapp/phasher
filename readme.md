@@ -83,4 +83,6 @@ the above is the same as:
 	
 ### notes ###
 
+Sebastian Lasse of the Redaktor Project has built an [implementation of phasher in javascript](https://redaktorcms.com/dev/phasher/demo_js/index.html), using the dojo library, which is pretty cool. 
+
 I'm still trying to speed the algorithm up and improve the hashing, since it does on occasion produce false positives (it was originally meant to catch imagespam on forums and imageboards so it's as aggressive as it can be.) If anyone wants to add discrete cosine transform to this by all means make a pull request because I still don't know how to do it.
