@@ -33,11 +33,30 @@ private static $Instance;
 		return $result;
 	}
 	
-	/* hash two images and return an index of their similarty as a percentage. */
+	// compare hash strings (no rotation)
+	// this assumes the strings will be the same length, which they will be
+	// as hashes. 
+	public function CompareStrings($hash1, $hash2, $precision = 1){
+		
+		$similarity = strlen($hash1);
+		
+		// take the hamming distance between the strings.
+		for($i=0; $i<strlen($hash1); $i++){
+			if($hash1[$i] != $hash2[$i]){
+				$similarity--;
+			}
+		}
+		
+		$percentage = round(($similarity/strlen($hash1)*100), $precision);
+		return $percentage;
+	}
 	
+	/* hash two images and return an index of their similarty as a percentage. */
 	public function Compare($res1, $res2, $rot=0, $precision = 1){
+		
 		$hash1 = $this->HashImage($res1); // this one should never be rotated
 		$hash2 = $this->HashImage($res2, $rot);
+		
 		$similarity = count($hash1);
 		
 		// take the hamming distance between the hashes.
@@ -186,8 +205,10 @@ private static $Instance;
 		$phash = array();
 		
 		for($x=0; $x<$scale; $x++){
+		
 			$avg = floor(array_sum($nhash[$x]) / count(array_filter($nhash[$x])));
-			for($y=0; $y<$scale; $y++){
+		
+		for($y=0; $y<$scale; $y++){
 				$rgb = $nhash[$x][$y];
 				if($rgb > $avg){
 					$phash[] = 1;
@@ -218,7 +239,6 @@ private static $Instance;
 	}
 
 	/* return a perceptual hash as a string. Hex or binary. */
-	
 	public function HashAsString($hash, $hex=true){
 		$i = 0;
 		$bucket=null;
