@@ -1,14 +1,10 @@
-<?PHP
-/* 
-	PHasher is a naive perceptual hashing class for PHP. 
-	
-*/
-class PHasher{
+<?php namespace Phasher;
+
+class Phasher{
 
 private static $Instance;
 
-	private function __construct(){
-	}
+	private function __construct(){}
 	
 	public static function Instance(){
 		 if (is_null(self::$Instance)){

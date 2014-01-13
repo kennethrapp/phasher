@@ -1,0 +1,19 @@
+{
+  "name": "kennethrapp/phasher",
+  "version": "1.0.0-alpha",
+  "description": "naive perceptual hasher for php",
+  "license": "MIT",
+  "keywords": [ "php", "perceptual hasher" ],
+  "authors": [
+    {
+      "name": "Kenneth Rapp",
+      "email": "kennethrapp1@gmail.com"
+    }
+  ],
+  
+	"autoload": {
+	    "psr-0": {
+	      "Phasher": "src/"
+	    }
+  	}
+}
