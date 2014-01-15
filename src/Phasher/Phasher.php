@@ -2,7 +2,7 @@
 
 class Phasher{
 
-private static $Instance;
+	private static $Instance;
 
 	private function __construct(){}
 	

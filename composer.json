@@ -12,8 +12,8 @@
   ],
   
 	"autoload": {
-	    "psr-0": {
-	      "Phasher": "src/"
-	    }
-  	}
+        "psr-0": {
+            "Phasher": "src/"
+        }
+    }
 }
