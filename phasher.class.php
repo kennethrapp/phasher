@@ -77,7 +77,7 @@ private static $Instance;
 		also we're storing the hash as an array of bits instead of a string. 
 		http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html */
 		
-	public function HashImage($res, $rot=0, $mir=0, $size = 8){
+	public function HashImage($res, $rot=0, $mir=0, $size = 8, $WhichHash = 'aHash'){
 		
 		$res = $this->NormalizeAsResource($res); // make sure this is a resource
 		$rescached = imagecreatetruecolor($size, $size);
@@ -132,17 +132,36 @@ private static $Instance;
 		
 		// create a hash (1 for pixels above the mean, 0 for average or below)
 		$index = 0;
-
-		foreach($pixels as $px){
-			if($px > $avg){
-				$hash[$index] = 1;
+		// Legendante - Added a check to use one of two hashes
+		// Use the difference hash (dHash) as per Dr. Neal Krawetz
+		// http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
+		if($WhichHash == 'dHash') 
+		{
+			foreach($pixels as $ind => $px)
+			{
+				// Legendante - Uses the original 8*8 comparison originally suggested to Dr. Krawetz
+				// not the modified 9*8 as suggested by Dr. Krawetz
+				if(!isset($pixels[($ind + 1)]))
+					$ind = -1;
+				if($px > $pixels[($ind + 1)])
+					$hash[] = 1;
+				else
+					$hash[] = 0;
 			}
-			else{
-				$hash[$index] = 0;
-			}
-			$index += 1;
 		}
-
+		// Use the original average hash as per kennethrapp
+		else
+		{
+			foreach($pixels as $px){
+				if($px > $avg){
+					$hash[$index] = 1;
+				}
+				else{
+					$hash[$index] = 0;
+				}
+				$index += 1;
+			}
+		}
 		// return the array
 		return $hash;
 	}
